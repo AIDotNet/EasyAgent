@@ -21,9 +21,10 @@
     <PackageReference Include="NPOI" Version="2.7.0" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Domain\Service\" />
+    <Folder Include="Domain\Interface\" />
     <Folder Include="Options\" />
     <Folder Include="Repositories\" />
     <Folder Include="Utils\" />
-    <Folder Include="Domain\" />
   </ItemGroup>
 </Project>

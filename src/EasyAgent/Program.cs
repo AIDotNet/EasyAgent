@@ -1,30 +1,41 @@
+using Microsoft.AspNetCore.Components;
 using AntDesign.ProLayout;
 using EasyAgent.Services;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyAgent
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddAntDesign();
+builder.Services.AddScoped(sp => new HttpClient
 {
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
+    BaseAddress = new Uri(sp.GetService<NavigationManager>()!.BaseUri)
+});
+builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
+builder.Services.AddScoped<IChartService, ChartService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddAntDesign();
-            builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
-            builder.Services.AddScoped<IChartService, ChartService>();
-            builder.Services.AddScoped<IProjectService, ProjectService>();
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IAccountService, AccountService>();
-            builder.Services.AddScoped<IProfileService, ProfileService>();
+var app = builder.Build();
 
-            await builder.Build().RunAsync();
-        }
-    }
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();

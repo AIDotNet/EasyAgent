@@ -28,6 +28,7 @@
         _menuData = await HttpClient.GetFromJsonAsync<MenuDataItem[]>("data/menu.json");
     }
 
+
     public LinkItem[] Links { get; set; } =
     {
         new LinkItem
