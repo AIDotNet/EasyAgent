@@ -1,25 +1,23 @@
 ﻿[
   {
+    "path": "/chat",
+    "name": "对话",
+    "key": "chat",
+    "icon": "aliwangwang"
+ 
+  },
+  {
     "path": "/agent",
-    "name": "Agent",
-    "key": "Agent",
-    "icon": "reddit",
-    "children": [
-      {
-        "path": "/",
-        "name": "Analysis Page",
-        "key": "dashboard.analysis"
-      },
-      {
-        "path": "/dashboard/monitor",
-        "name": "Monitoring Page",
-        "key": "dashboard.monitor"
-      },
-      {
-        "path": "/dashboard/workplace",
-        "name": "Workbench",
-        "key": "dashboard.workplace"
-      }
-    ]
+    "name": "Agent设置",
+    "key": "agent",
+    "icon": "reddit"
+   
+  },
+  {
+    "path": "/model",
+    "name": "模型设置",
+    "key": "model",
+    "icon": "appstore-add"
+   
   }
 ]
