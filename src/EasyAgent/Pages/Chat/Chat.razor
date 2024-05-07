@@ -1,0 +1,58 @@
+﻿@page "/Chat"
+
+<div id="chat">
+    <div id="scrollDiv" style="flex:1; width:100%; overflow-y:auto; overflow-x:hidden;padding:10px;">
+        <Virtualize Items="@(MessageList.ToList())" Context="item">
+            @if (item.)
+            {
+                <GridRow>
+                    <GridCol Span="23">
+                        <div class="chat-bubble sent">
+                            <Popover Title="@item.CreateTime.ToString()">
+                                <Unbound>
+                                    <Flex Vertical RefBack="context">
+                                        @if (item.FileName != null)
+                                        {
+                                            <p class="message-file">
+                                                <Upload DefaultFileList="[new(){ FileName= item.FileName }]" />
+                                            </p>
+                                        }
+                                        <p>@(item.Context)</p>
+                                    </Flex>
+                                </Unbound>
+                            </Popover>
+                        </div>
+                        <Icon Style="float:right;margin-top:10px;" Type="copy" Theme="outline" OnClick="async () =>await OnCopyAsync(item)" />
+                    </GridCol>
+                    <GridCol Span="1">
+                        <Image Width="25px" Height="25px" Style="margin-top:10px;" Src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
+                    </GridCol>
+                </GridRow>
+            }
+            else
+            {
+                <GridRow>
+                    <GridCol Span="1">
+                        <Image Width="25px" Height="25px" Style="margin-top:10px;" Src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg" />
+                    </GridCol>
+                    <GridCol Span="23">
+                        <div class="chat-bubble received">
+                            @((MarkupString)(item.Context))
+                        </div>
+                    </GridCol>
+                </GridRow>
+            }
+        </Virtualize>
+    </div>
+
+    <Flex Justify="end">
+
+        <AntDesign.Input @bind-Value="@(_messageInput)" DebounceMilliseconds="@(-1)" Placeholder="输入消息回车发送" OnPressEnter="@(async () => await OnSendAsync())" Disabled="@Sendding"></AntDesign.Input>
+   
+        <Button Icon="send" Type="@(ButtonType.Link)" OnClick="@(async () => await OnSendAsync())" Disabled="@Sendding"></Button>
+    </Flex>
+</div>
+
+@code {
+
+}
