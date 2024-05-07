@@ -21,7 +21,7 @@ namespace EasyAgent.Domain.Repositories
         /// <summary>
         /// 模型名称
         /// </summary>
-        [Required(ErrorMessage = "请输入模型名称")]
+        [Required(ErrorMessage = "请输入部署名/模型名")]
         public string ModelName { get; set; } = "";
         /// <summary>
         /// 模型秘钥
