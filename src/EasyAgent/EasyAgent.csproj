@@ -22,5 +22,9 @@
   <ItemGroup>
     <ProjectReference Include="..\EasyAgent.Doamin\EasyAgent.Doamin.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
   
 </Project>

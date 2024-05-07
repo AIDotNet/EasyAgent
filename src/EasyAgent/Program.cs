@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using AntDesign.ProLayout;
-using EasyAgent.Services;
+using EasyAgent.Doamin.Common.Map;
+using EasyAgent.Doamin.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +14,11 @@ builder.Services.AddScoped(sp => new HttpClient
     BaseAddress = new Uri(sp.GetService<NavigationManager>()!.BaseUri)
 });
 builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
-builder.Services.AddScoped<IChartService, ChartService>();
-builder.Services.AddScoped<IProjectService, ProjectService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
+
+
+builder.Services.AddMapper();
+builder.Configuration.GetSection("DBConnection").Get<DBConnectionOption>();
+
 
 var app = builder.Build();
 
