@@ -23,6 +23,5 @@
   <ItemGroup>
     <Folder Include="Domain\Service\" />
     <Folder Include="Domain\Interface\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
 </Project>

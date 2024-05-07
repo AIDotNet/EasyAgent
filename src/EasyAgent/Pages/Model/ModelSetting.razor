@@ -1,12 +1,39 @@
 ﻿@namespace EasyAgent.Pages.Model
-
+@using Domain.Domain.Model.Enum
 @page "/model"
 
 
 <PageContainer Title="模型设置">
     <ChildContent>
-        <Card>    
+        <Card>
+            <Form Model="@_aiModel"
+                  Style="margin-top: 8px;"
+                  OnFinish="HandleSubmit">
+                <FormItem Label="AI类型" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">
+                    <RadioGroup @bind-Value="context.AIType" ButtonStyle="@RadioButtonStyle.Solid">
+                        <Radio RadioButton Value="@(AIType.OpenAI)">OpenAI</Radio>
+                        <Radio RadioButton Value="@(AIType.AzureOpenAI)">Azure OpenAI</Radio>
+                    </RadioGroup>
+                </FormItem>
 
+                @if (context.AIType == AIType.AzureOpenAI)
+                {
+                    <FormItem Label="请求地址" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">
+                        <Input Placeholder="请输入请求地址" @bind-Value="@context.EndPoint" />
+                    </FormItem>
+                }
+                <FormItem Label="部署名/模型名" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">
+                    <Input Placeholder="请输入部署名/模型名" @bind-Value="@context.ModelName" />
+                </FormItem>
+                <FormItem Label="模型秘钥" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">
+                    <InputPassword @bind-Value="@context.ModelKey" Placeholder="请输入模型秘钥" />
+                </FormItem>
+                <FormItem Label=" " Style="margin-top:32px" WrapperCol="LayoutModel._submitFormLayout.WrapperCol">
+                    <Button Type="primary" HtmlType="submit">
+                        保存
+                    </Button>
+                </FormItem>
+            </Form>
         </Card>
     </ChildContent>
 </PageContainer>

@@ -36,6 +36,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 
+//扩展初始化实现
+app.CodeFirst();
+
 app.UseRouting();
 
 app.MapBlazorHub();
