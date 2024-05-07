@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EasyAgent.Doamin\EasyAgent.Doamin.csproj" />
+    <ProjectReference Include="..\EasyAgent.Doamin\EasyAgent.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

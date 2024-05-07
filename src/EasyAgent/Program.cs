@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using AntDesign.ProLayout;
 using EasyAgent.Doamin.Common.Map;
 using EasyAgent.Doamin.Options;
+using EasyAgent.Doamin.Common.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,8 @@ builder.Services.AddScoped(sp => new HttpClient
 });
 builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
 
-
+builder.Services.AddServicesFromAssemblies("EasyAgent");
+builder.Services.AddServicesFromAssemblies("EasyAgent.Domain");
 builder.Services.AddMapper();
 builder.Configuration.GetSection("DBConnection").Get<DBConnectionOption>();
 
@@ -30,7 +32,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
