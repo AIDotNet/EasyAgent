@@ -6,10 +6,10 @@
     "icon": "aliwangwang"
   },
   {
-    "path": "/agent",
-    "name": "Agent设置",
+    "path": "/agentlist",
+    "name": "Agent配置",
     "key": "agent",
-    "icon": "reddit"   
+    "icon": "reddit"
   },
   {
     "path": "/model",

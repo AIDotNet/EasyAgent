@@ -1,0 +1,35 @@
+﻿@page "/Agent/Add"
+@page "/Agent/Add/{AgentId}"
+@using EasyAgent.Components
+
+<PageContainer Title="新增Agent">
+    <ChildContent>
+        <Card>
+            <Form Model="@_agentModel"
+                  Style="margin-top: 8px;"
+                  OnFinish="HandleSubmit">
+                <FormItem Label="Agent名称" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">
+                    <Input Placeholder="请输入Agent名称" @bind-Value="@context.Name" />
+                </FormItem>
+
+                <FormItem Label="图标" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">
+                    <IconPicker @bind-Value="@context.Icon"></IconPicker>
+                </FormItem>
+                <FormItem Label="Agent提示词描述" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">
+                    <TextArea MinRows="5" Placeholder="请输入Agent提示词描述" @bind-Value="@context.Prompt" />
+                </FormItem>
+
+                <FormItem Label=" " Style="margin-top:32px" WrapperCol="LayoutModel._submitFormLayout.WrapperCol">
+                    <Button Type="primary" HtmlType="submit">
+                        保存
+                    </Button>
+                </FormItem>
+            </Form>
+        </Card>
+    </ChildContent>
+</PageContainer>
+
+
+@code {
+
+}

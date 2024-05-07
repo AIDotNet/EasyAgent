@@ -19,7 +19,7 @@
                 @if (context.AIType == AIType.AzureOpenAI)
                 {
                     <FormItem Label="请求地址" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">
-                        <Input Placeholder="请输入请求地址" @bind-Value="@context.EndPoint" />
+                        <InputPassword Placeholder="请输入请求地址" @bind-Value="@context.EndPoint" />
                     </FormItem>
                 }
                 <FormItem Label="部署名/模型名" LabelCol="LayoutModel._formItemLayout.LabelCol" WrapperCol="LayoutModel._formItemLayout.WrapperCol">

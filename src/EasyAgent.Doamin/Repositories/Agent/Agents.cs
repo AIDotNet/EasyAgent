@@ -26,7 +26,8 @@ namespace EasyAgent.Domain.Repositories
         /// <summary>
         /// 描述
         /// </summary>
-        [Required(ErrorMessage = "请输入智能体系统描述")]
+        [Required(ErrorMessage = "请输入智能体提示词描述")]
+        [SugarColumn(ColumnDataType = "varchar(2000)")]
         public string Prompt { get; set; }
     }
 }

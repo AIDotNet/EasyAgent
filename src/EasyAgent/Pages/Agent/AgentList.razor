@@ -1,0 +1,61 @@
+﻿@page "/agentlist"
+@using EasyAgent.Domain.Repositories
+@inject NavigationManager NavigationManager
+
+<PageContainer Title="Agent配置">
+    <Content>
+        <div style="text-align: center;">
+            <Search Placeholder="输入回车"
+                    EnterButton="@("搜索")"
+                    Style="max-width: 522px; width: 100%;"
+                    OnSearch="Search" />
+        </div>
+    </Content>
+    <ChildContent>
+        <div class="cardList">
+            <AntList TItem="Agents"
+                     DataSource="_data"
+                     ItemLayout="ListItemLayout.Horizontal"
+                     Grid="_listGridType">
+                <ListItem NoFlex>
+                    @if (string.IsNullOrEmpty(context.Id))
+                    {
+                        <Button Type="dashed" class="newButton" @onclick="NavigateToAddAgent">
+                            <Icon Type="plus" Theme="outline" /> 创建Agent
+                        </Button>
+                    }
+                    else
+                    {
+                        <Card Hoverable Bordered Class="card" Actions="@(new[] {
+                            update(async ()=>await Update(context.Id)),
+                            delete(async ()=>await Delete(context.Id)) ,
+                             })" Style="max-height:247px;">
+                            <CardMeta>
+                                <AvatarTemplate>
+                                    <Avatar Icon="@context.Icon" Style="background-color: #1890ff" />
+                                </AvatarTemplate>
+                                <TitleTemplate>
+                                    <a>@context.Name</a>
+                                </TitleTemplate>
+                                <DescriptionTemplate>
+                                    <Paragraph class="item" Ellipsis>
+                                        <!--todo: Ellipsis not working-->
+                                        <span>
+                                            @context.Prompt
+
+                                        </span>
+                                    </Paragraph>
+                                </DescriptionTemplate>
+                            </CardMeta>
+                        </Card>
+                    }
+                </ListItem>
+            </AntList>
+        </div>
+    </ChildContent>
+</PageContainer>
+
+@code {
+    RenderFragment update(Action clickAction) =>@<a key="update" @onclick="@clickAction">修改</a>;
+    RenderFragment delete(Action clickAction) => @<a key="delete" @onclick="@clickAction">删除</a> ;
+}
