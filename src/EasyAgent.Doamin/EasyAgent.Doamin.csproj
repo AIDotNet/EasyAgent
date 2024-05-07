@@ -23,8 +23,6 @@
   <ItemGroup>
     <Folder Include="Domain\Service\" />
     <Folder Include="Domain\Interface\" />
-    <Folder Include="Options\" />
-    <Folder Include="Repositories\" />
     <Folder Include="Utils\" />
   </ItemGroup>
 </Project>
