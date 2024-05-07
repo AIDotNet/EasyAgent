@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <SignAssembly>False</SignAssembly>
     <Authors>许泽宇</Authors>
-    <Product>AntSK</Product>
+    <Product>EasyAgent</Product>
     <Company>xuzeyu</Company>
     <Description>商务需求联系微信xuzeyu91</Description>
   </PropertyGroup>
