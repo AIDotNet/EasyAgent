@@ -4,20 +4,17 @@
     "name": "对话",
     "key": "chat",
     "icon": "aliwangwang"
- 
   },
   {
     "path": "/agent",
     "name": "Agent设置",
     "key": "agent",
-    "icon": "reddit"
-   
+    "icon": "reddit"   
   },
   {
     "path": "/model",
     "name": "模型设置",
     "key": "model",
-    "icon": "appstore-add"
-   
+    "icon": "appstore-add"  
   }
 ]
