@@ -15,6 +15,7 @@ namespace EasyAgent.Pages.Chat
 
         protected async Task OnSendAsync()
         {
+
         }
     }
 }
