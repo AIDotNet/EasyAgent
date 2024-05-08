@@ -24,8 +24,4 @@
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="NPOI" Version="2.7.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Domain\Service\" />
-    <Folder Include="Domain\Interface\" />
-  </ItemGroup>
 </Project>

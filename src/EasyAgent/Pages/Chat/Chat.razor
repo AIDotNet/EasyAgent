@@ -1,48 +1,129 @@
 ﻿@page "/Chat"
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using AntDesign.ProLayout
+@using EasyAgent.Domain.Repositories
 
-<div id="chat">
-    <div id="scrollDiv" style="flex:1; width:100%; overflow-y:auto; overflow-x:hidden;padding:10px;">
-        <Virtualize Items="@(MessageList.ToList())" Context="item">
-            @if (item.Role == AutoGen.Mistral.ChatMessage.RoleEnum.User)
-            {
-                <GridRow>
-                    <GridCol Span="23">
-                        <div class="chat-bubble sent">
-                            <div class="chat-bubble received">
-                                @((MarkupString)(item.Content))
-                            </div>
-                        </div>
-                    </GridCol>
-                    <GridCol Span="1">
-                        <Image Width="25px" Height="25px" Style="margin-top:10px;" Src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
-                    </GridCol>
-                </GridRow>
-            }
-            else
-            {
-                <GridRow>
-                    <GridCol Span="1">
-                        <Image Width="25px" Height="25px" Style="margin-top:10px;" Src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg" />
-                    </GridCol>
-                    <GridCol Span="23">
-                        <div class="chat-bubble received">
-                            @((MarkupString)(item.Content))
-                        </div>
-                    </GridCol>
-                </GridRow>
-            }
-        </Virtualize>
-    </div>
+<GridRow Gutter="(16, 16)">
+    <GridCol Span="24">
+        <Card Style="height:75vh;overflow: auto;">
+            <TitleTemplate>
+                <Icon Type="setting" /> 选择Agent
+                <Select Mode="tags"
+                        @bind-Values="@_agentIds"
+                        Placeholder="请选择Agent"    
+                        Style="width:800px"
+                        TItem="string"
+                        TItemValue="string"
+                        Size="@AntSizeLDSType.Default">
+                    <SelectOptions>
+                        @foreach (var item in _list)
+                        {
+                            <SelectOption TItemValue="string" TItem="string" Value=@item.Id Label=@item.Name />
+                        }
+                    </SelectOptions>
+                </Select> 
+            </TitleTemplate>
+            <Body>
+                <div id="chat">
+                    <div id="scrollDiv" style="flex:1; width:100%; overflow-y:auto; overflow-x:hidden;padding:10px;">
+                        <Virtualize Items="@(MessageList.ToList())" Context="item">
+                            @if (item.Role == AutoGen.Mistral.ChatMessage.RoleEnum.User)
+                            {
+                                <GridRow>
+                                    <GridCol Span="23">
+                                        <div class="chat-bubble sent">
+                                            <div class="chat-bubble received">
+                                                @((MarkupString)(item.Content))
+                                            </div>
+                                        </div>
+                                    </GridCol>
+                                    <GridCol Span="1">
+                                        <Image Width="25px" Height="25px" Style="margin-top:10px;" Src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
+                                    </GridCol>
+                                </GridRow>
+                            }
+                            else
+                            {
+                                <GridRow>
+                                    <GridCol Span="1">
+                                        <Image Width="25px" Height="25px" Style="margin-top:10px;" Src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg" />
+                                    </GridCol>
+                                    <GridCol Span="23">
+                                        <div class="chat-bubble received">
+                                            @((MarkupString)(item.Content))
+                                        </div>
+                                    </GridCol>
+                                </GridRow>
+                            }
+                        </Virtualize>
+                    </div>
 
-    <Flex Justify="end">
+                    <Flex Justify="end">
 
-        <AntDesign.Input @bind-Value="@(_messageInput)" DebounceMilliseconds="@(-1)" Placeholder="输入消息回车发送" OnPressEnter="@(async () => await OnSendAsync())" Disabled="@Sendding"></AntDesign.Input>
+                        <AntDesign.Input @bind-Value="@(_messageInput)" DebounceMilliseconds="@(-1)" Placeholder="输入消息回车发送" OnPressEnter="@(async () => await OnSendAsync())" Disabled="@Sendding"></AntDesign.Input>
 
-        <Button Icon="send" Type="@(ButtonType.Link)" OnClick="@(async () => await OnSendAsync())" Disabled="@Sendding"></Button>
-    </Flex>
-</div>
+                        <Button Icon="send" Type="@(ButtonType.Link)" OnClick="@(async () => await OnSendAsync())" Disabled="@Sendding"></Button>
+                    </Flex>
+                </div>
+            </Body>
+        </Card>
+    </GridCol>
+
+</GridRow>
+<style>
+    #chat {
+        height: calc(75vh - 120px);
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+        overflow-y: auto;
+        margin: 0;
+    }
+
+    body {
+        margin: 0;
+        justify-content: center;
+        align-items: flex-start;
+        height: 100vh;
+        overflow-y: hidden;
+    }
+
+    .chat-container {
+        width: 350px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        padding-bottom: 15px;
+    }
+
+    .chat-bubble {
+        padding: 10px;
+        margin: 10px;
+        margin-bottom: 0;
+        border-radius: 5px;
+        max-width: 70%;
+        position: relative;
+    }
+
+    .received {
+        background-color: #f2f2f2;
+        align-self: flex-start;
+        float: left;
+    }
+
+    .sent {
+        background-color: #e5f2ff;
+        align-self: flex-end;
+        float: right;
+    }
+
+    .ant-card-body {
+        height: 90% !important;
+    }
+</style>
 
 @code {
 
