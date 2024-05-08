@@ -6,6 +6,8 @@ using EasyAgent.Domain.Domain.Interface;
 using EasyAgent.Domain.Repositories;
 using Microsoft.AspNetCore.Components;
 using NPOI.POIFS.Properties;
+using NPOI.SS.Formula.Functions;
+using System.Text;
 
 namespace EasyAgent.Pages.Chat
 {
@@ -19,10 +21,17 @@ namespace EasyAgent.Pages.Chat
 
         IEnumerable<string> _agentIds = [];
 
+        private bool agentStart = false;
+
         protected string? _messageInput;
+
+        protected string? _messageInputNew;
         protected string _json = "";
         protected bool Sendding = false;
         protected List<ChatMessage> MessageList = [];
+
+        private MiddlewareAgent< UserProxyAgent> userProxyAgent { get; set; }
+        private GroupChatManager groupChatManager { get; set; }
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -31,31 +40,83 @@ namespace EasyAgent.Pages.Chat
 
         protected async Task OnSendAsync()
         {
-            var llm = _iLLMService.GetLLMConfig();
+            try
+            {
+                MessageList.Add(new ChatMessage(ChatMessage.RoleEnum.User, _messageInput));
+                await InvokeAsync(StateHasChanged);
 
-            List<MiddlewareAgent> agentList = new List<MiddlewareAgent>();
-            foreach (var agentid in _agentIds)
-            { 
-                var agent = _list.FirstOrDefault(x => x.Id == agentid);
-                var assistantAgent = new AssistantAgent(
-                     name: agent.Name,
-                     systemMessage: agent.Prompt,
-                     llmConfig: llm).RegisterPrintMessage();
-                agentList.Add(assistantAgent);
+                if (!agentStart)
+                {
+                    agentStart = true;
+                    var llm = _iLLMService.GetLLMConfig();
+
+                    List<IAgent> agentList = new List<IAgent>();
+                    foreach (var agentid in _agentIds)
+                    {
+                        var agent = _list.FirstOrDefault(x => x.Id == agentid);
+                        var assistantAgent = new AssistantAgent(
+                            name: agent.Name,
+                            systemMessage: agent.Prompt,
+                            llmConfig: new ConversableAgentConfig
+                            {
+                                Temperature = 0,
+                                ConfigList = [llm],
+                            }).RegisterMiddleware(async (messages, options, agent, ct) =>
+                            {
+                                var reply = await agent.GenerateReplyAsync(messages, options, ct);
+                                var formattedMessage = reply.FormatMessage();
+                                MessageList.Add(new ChatMessage( ChatMessage.RoleEnum.Assistant, formattedMessage) );
+                                await InvokeAsync(StateHasChanged);
+                                return reply;
+                            });
+                        agentList.Add(assistantAgent);
+                    }
+
+                    userProxyAgent = new UserProxyAgent(
+                          name: "user",
+                          humanInputMode: HumanInputMode.ALWAYS)
+                       .RegisterMiddleware(async (messages, options, agent, ct) =>
+                       {
+
+                           MessageList.Add(new ChatMessage(ChatMessage.RoleEnum.System, "该你输入了"));
+                           await InvokeAsync(StateHasChanged);
+
+                           while (true)
+                           {
+                               await Task.Delay(1000);
+                               if (!string.IsNullOrEmpty(_messageInputNew))
+                               {
+                                   var temp = _messageInputNew;
+                                   _messageInputNew = "";
+                                   return new TextMessage(Role.User, temp);
+                               }
+                      
+                           }
+                       });
+
+                    agentList.Add(userProxyAgent);
+
+
+                    var groupChat = new RoundRobinGroupChat(
+                        agents: agentList.ToArray());
+
+                    groupChatManager = new GroupChatManager(groupChat);
+
+                    var conversationHistory = await userProxyAgent.InitiateChatAsync(
+                          receiver: groupChatManager,
+                          message: _messageInput,
+                          maxRound: 30);
+                    _messageInput = "";
+                }
+                else
+                {
+                    _messageInputNew = _messageInput;
+                }
             }
-
-            var groupChat = new RoundRobinGroupChat(agents: agentList);
-
-            var groupChatAgent = new GroupChatManager(groupChat);
-
-            var userProxyAgent = new UserProxyAgent(
-                  name: "user",
-                  humanInputMode: HumanInputMode.AUTO).RegisterPrintMessage(); ;
-
-            var conversationHistory = await userProxyAgent.InitiateChatAsync(
-                  receiver: groupChatAgent,
-                  message: _messageInput,
-                  maxRound: 30);
+            catch (Exception ex)
+            { 
+            
+            }
 
         }
     }

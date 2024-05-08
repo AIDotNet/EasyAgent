@@ -10,7 +10,7 @@
                 <Icon Type="setting" /> 选择Agent
                 <Select Mode="tags"
                         @bind-Values="@_agentIds"
-                        Placeholder="请选择Agent"    
+                        Placeholder="请选择Agent"
                         Style="width:800px"
                         TItem="string"
                         TItemValue="string"
@@ -21,7 +21,7 @@
                             <SelectOption TItemValue="string" TItem="string" Value=@item.Id Label=@item.Name />
                         }
                     </SelectOptions>
-                </Select> 
+                </Select>
             </TitleTemplate>
             <Body>
                 <div id="chat">
@@ -32,13 +32,23 @@
                                 <GridRow>
                                     <GridCol Span="23">
                                         <div class="chat-bubble sent">
-                                            <div class="chat-bubble received">
-                                                @((MarkupString)(item.Content))
-                                            </div>
+
+                                            @(item.Content)
+
                                         </div>
                                     </GridCol>
                                     <GridCol Span="1">
                                         <Image Width="25px" Height="25px" Style="margin-top:10px;" Src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
+                                    </GridCol>
+                                </GridRow>
+                            }
+                            else if (item.Role == AutoGen.Mistral.ChatMessage.RoleEnum.System)
+                            {
+                                <GridRow>
+                                    <GridCol Span="24">
+                                        <div class="system-message">
+                                            @(item.Content)
+                                        </div>
                                     </GridCol>
                                 </GridRow>
                             }
@@ -123,6 +133,16 @@
     .ant-card-body {
         height: 90% !important;
     }
+
+    .system-message {
+        color: #333; /* 文本颜色 */
+        text-align: center; /* 文本居中 */
+        width: 100%; /* 宽度占满容器 */
+        padding: 10px; /* 内边距 */
+        margin: 10px 0; /* 外边距，仅提供上下边距 */
+        font-size:10px;
+    }
+
 </style>
 
 @code {
