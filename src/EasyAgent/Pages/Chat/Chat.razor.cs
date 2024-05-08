@@ -1,4 +1,5 @@
-﻿using AutoGen;
+﻿using AntDesign;
+using AutoGen;
 using AutoGen.Core;
 using AutoGen.Mistral;
 using AutoGen.OpenAI;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.Components;
 using NPOI.POIFS.Properties;
 using NPOI.SS.Formula.Functions;
 using System.Text;
+using System.Text.RegularExpressions;
+using Match = System.Text.RegularExpressions.Match;
 
 namespace EasyAgent.Pages.Chat
 {
@@ -65,8 +68,17 @@ namespace EasyAgent.Pages.Chat
                             {
                                 var reply = await agent.GenerateReplyAsync(messages, options, ct);
                                 var formattedMessage = reply.FormatMessage();
-                                MessageList.Add(new ChatMessage( ChatMessage.RoleEnum.Assistant, formattedMessage) );
-                                await InvokeAsync(StateHasChanged);
+                                string pattern = @"TextMessage from (\S+)[\s\S]*?-{20}\s*(?:\r?\n)?([\s\S]*?)(?:\r?\n)?-{20}";
+
+                                Match match = Regex.Match(formattedMessage, pattern);
+
+                                if (match.Success)
+                                {
+                                    string name = match.Groups[1].Value; // 提取括号内的分组
+                                    string msg = match.Groups[2].Value;
+                                    MessageList.Add(new ChatMessage(ChatMessage.RoleEnum.Assistant, $"{name}：{msg}"));
+                                    await InvokeAsync(StateHasChanged);
+                                }                            
                                 return reply;
                             });
                         agentList.Add(assistantAgent);
@@ -74,7 +86,7 @@ namespace EasyAgent.Pages.Chat
 
                     userProxyAgent = new UserProxyAgent(
                           name: "user",
-                          humanInputMode: HumanInputMode.ALWAYS)
+                          humanInputMode: HumanInputMode.AUTO)
                        .RegisterMiddleware(async (messages, options, agent, ct) =>
                        {
 
