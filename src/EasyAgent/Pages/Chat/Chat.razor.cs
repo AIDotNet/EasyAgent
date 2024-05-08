@@ -1,4 +1,5 @@
 ﻿using AntDesign;
+using AntDesign.Charts;
 using AutoGen;
 using AutoGen.Core;
 using AutoGen.Mistral;
@@ -45,7 +46,10 @@ namespace EasyAgent.Pages.Chat
         {
             try
             {
+                Sendding = true;
                 MessageList.Add(new ChatMessage(ChatMessage.RoleEnum.User, _messageInput));
+                var msg= _messageInput;
+                _messageInput = "";
                 await InvokeAsync(StateHasChanged);
 
                 if (!agentStart)
@@ -91,43 +95,70 @@ namespace EasyAgent.Pages.Chat
                        {
 
                            MessageList.Add(new ChatMessage(ChatMessage.RoleEnum.System, "该你输入了"));
-                           await InvokeAsync(StateHasChanged);
-
+                           Sendding = false;
+                           await InvokeAsync(StateHasChanged);       
                            while (true)
                            {
                                await Task.Delay(1000);
                                if (!string.IsNullOrEmpty(_messageInputNew))
                                {
                                    var temp = _messageInputNew;
-                                   _messageInputNew = "";
+                                   _messageInputNew = "";        
                                    return new TextMessage(Role.User, temp);
                                }
                       
                            }
                        });
 
+
+
+
+                    //var groupChat = new RoundRobinGroupChat(
+                    //    agents: agentList.ToArray());
+
+                    var admin = new GPTAgent(
+                     name: "admin",
+                     systemMessage: "您是群管理员，一旦用户任务完成，请说[TERMINATE]加上最终答案，终止群聊",
+                     temperature: 0,
+                     config: llm);
+                     //.RegisterMiddleware(async (messages, option, agent, _) =>
+                     //{
+                     //    var reply = await agent.GenerateReplyAsync(messages, option);
+                     //    if (reply is TextMessage textMessage && textMessage.Content.Contains("TERMINATE") is true)
+                     //    {
+                     //        var content = $"{textMessage.Content}\n\n {GroupChatExtension.TERMINATE}";
+
+                     //        return new TextMessage(Role.Assistant, content, from: reply.From);
+                     //    }
+                     //    return reply;
+                     //});
+
                     agentList.Add(userProxyAgent);
 
+                    agentList.Add(admin);
 
-                    var groupChat = new RoundRobinGroupChat(
-                        agents: agentList.ToArray());
+                    var groupChat = new GroupChat(
+                        admin: admin,
+                        members: agentList.ToArray()
+                    );
+                    userProxyAgent.SendIntroduction("我们的群聊即将开始", groupChat);
 
                     groupChatManager = new GroupChatManager(groupChat);
 
                     var conversationHistory = await userProxyAgent.InitiateChatAsync(
                           receiver: groupChatManager,
-                          message: _messageInput,
+                          message: msg,
                           maxRound: 30);
-                    _messageInput = "";
+
                 }
                 else
                 {
-                    _messageInputNew = _messageInput;
+                    _messageInputNew = msg;
                 }
             }
             catch (Exception ex)
             { 
-            
+                Console.WriteLine(ex.Message);
             }
 
         }

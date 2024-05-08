@@ -14,7 +14,7 @@
                         Style="width:800px"
                         TItem="string"
                         TItemValue="string"
-                        Size="@AntSizeLDSType.Default">
+                        Size="@AntSizeLDSType.Default" Disabled="@(userProxyAgent!=null)">
                     <SelectOptions>
                         @foreach (var item in _list)
                         {
@@ -135,7 +135,7 @@
     }
 
     .system-message {
-        color: #333; /* 文本颜色 */
+        color: #666666; /* 文本颜色 */
         text-align: center; /* 文本居中 */
         width: 100%; /* 宽度占满容器 */
         padding: 10px; /* 内边距 */
