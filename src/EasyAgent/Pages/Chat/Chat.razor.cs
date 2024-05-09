@@ -6,6 +6,7 @@ using AutoGen.Mistral;
 using AutoGen.OpenAI;
 using EasyAgent.Domain.Domain.Interface;
 using EasyAgent.Domain.Repositories;
+using Markdig;
 using Microsoft.AspNetCore.Components;
 using NPOI.POIFS.Properties;
 using NPOI.SS.Formula.Functions;
@@ -80,7 +81,7 @@ namespace EasyAgent.Pages.Chat
                                 {
                                     string name = match.Groups[1].Value; // 提取括号内的分组
                                     string msg = match.Groups[2].Value;
-                                    MessageList.Add(new ChatMessage(ChatMessage.RoleEnum.Assistant, $"{name}：{msg}"));
+                                    MessageList.Add(new ChatMessage(ChatMessage.RoleEnum.Assistant, Markdown.ToHtml($"{name}：{msg}")));
                                     await InvokeAsync(StateHasChanged);
                                 }                            
                                 return reply;
@@ -141,7 +142,7 @@ namespace EasyAgent.Pages.Chat
                         admin: admin,
                         members: agentList.ToArray()
                     );
-                    userProxyAgent.SendIntroduction("我们的群聊即将开始", groupChat);
+                    userProxyAgent.SendIntroduction("我是上市公司老总，湖北首富", groupChat);
 
                     groupChatManager = new GroupChatManager(groupChat);
 
