@@ -136,8 +136,6 @@ namespace EasyAgent.Pages.Chat
 
                     agentList.Add(userProxyAgent);
 
-                    agentList.Add(admin);
-
                     var groupChat = new GroupChat(
                         admin: admin,
                         members: agentList.ToArray()
